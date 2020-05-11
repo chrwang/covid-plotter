@@ -1,0 +1,135 @@
+body{
+	top: 30px;
+	right: 0px;
+	bottom: 0px;
+	left: 0px;
+	margin: auto;
+	margin-top: 10px;
+	font-family: 'Source Sans Pro', sans-serif;
+	background: #313947;
+	color: #BDBDBD;
+}
+
+html {
+	height: 100%;
+}
+
+#outer {
+	height: 95vh;
+	flex-direction: column;
+	display: flex;
+}
+
+#header{
+	margin-left: 100px;
+	margin-right: 100px;
+	padding-left: 5%;
+	padding-right: 5%;
+	margin-top: 30px;
+	font-size: 110%;
+}
+
+#selectDate, #uploader{
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+#uploader{
+	color: #BDBDBD;
+}
+
+[type="date"] {
+  background:#fff url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png)  97% 50% no-repeat ;
+}
+[type="date"]::-webkit-inner-spin-button, [type="date"]::-webkit-clear-button {
+  display: none;
+}
+[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
+#selectDate {
+	border: 1px solid #c4c4c4;
+	border-radius: 5px;
+	background-color: #f1f1f1;
+	padding: 3px 5px;
+	box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
+}
+
+#selectQuantile {
+	border: none;
+	border-radius: 4px;
+	background-color: #f1f1f1;
+}
+
+#mapForm{
+	left: 50%;
+	margin: auto;
+}
+
+#mapContainer{
+	position: relative;
+	flex: 1;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+}
+
+
+#waitingText{
+	position: absolute;
+	top: 5%;
+	left: 12%;
+	z-index: 1;
+}
+
+#map{
+	display:block;
+	width:80%;
+	height:97%;
+	background:#313947;
+	margin:auto;
+	margin-top:20px;
+	border: 2px solid #000;
+	z-index: 0;
+}
+
+#pagefoot{
+	text-align: center;
+	position: absolute;
+	bottom: 5px;
+	width: 100%
+}
+
+.counties {
+	fill: none;
+	stroke: #00BCD4;
+	stroke-width:.2;
+}
+
+.states {
+	fill: none;
+	stroke: #00BCD4;
+	stroke-linejoin: round;
+	stroke-width:1;
+}
+
+.select {
+	margin-top: 8px;
+	height: 34px;
+	overflow: hidden;
+	border: 1px solid #ccc;
+	font-size: 100%;
+ }
+
+#selectPer{
+	width: 160px;
+}
+
+
+svg{
+	margin-top: 10px;
+}
+
+a {
+	color: #FF9800;
+}
