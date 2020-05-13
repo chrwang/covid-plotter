@@ -10,4 +10,4 @@ you will have to disable CORS in order to allow for file uploads.
 
 ## License
 
-The source code is released under MIT, and any image you produce with it is released under Unlicence, i.e. you can do whatever you want with the images.
+The source code is released under Apache 2.0, and any image you produce with it is released under Unlicence, i.e. you can do whatever you want with the images.
