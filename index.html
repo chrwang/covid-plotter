@@ -4,6 +4,7 @@
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="style.css"/>
 <link rel="stylesheet" type="text/css" href="tooltip.css"/>
+<link rel="stylesheet" type="text/css" href="style_no_export.css"/>
 </head>
 <body>
 <div id="outer">
@@ -37,9 +38,9 @@
 			<option value="90">90%</option>
 		</select>
 	</label>
-	<label>Date to Plot
+	<!--label>Date to Plot
 		<input type="date" id="selectDate" value="2020-04-14" min="2019-12-31" max="2020-06-02" required> </input>
-	</label>
+	</label-->
 	<label>Data File
 		<input type="file" id="uploader"/>
 	</label>
@@ -49,10 +50,11 @@
 <div id="mapContainer">
 	<div id="waitingText"> <h3>Waiting for file upload...</h3></div>
 	<svg id="map"> </text></svg>
+	<div id="downloadBtnDiv" style="visibility: hidden"> <button id="downloadBtn"> Save </button> </div>
 </div>
 
-<div id="sliders">
-
+<div id="slider_date">
+	<button id="play-button">Play</button>
 </div>
 
 <div class="tooltip"></div>
@@ -61,228 +63,12 @@
 	Built with &hearts; by <a href="https://github.com/chrwang">Chris Wang</a> and [ASCIT_DONUT] test3
 </div>
 
-<script src="https://d3js.org/d3.v3.min.js"></script>
-<script src="https://d3js.org/queue.v1.min.js"></script>
-<script src="https://d3js.org/topojson.v1.min.js"></script>
-<script src="https://d3js.org/d3-time.v1.min.js"></script>
-<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
-<script src="https://d3js.org/d3-scale.v3.min.js"></script>
-<script>
-var dataReady = false
-
-var plot_date = "2020-04-14";
-
-var quant = "50";
-
-var statById = d3.map();
-
-var colorRange = [	'rgb(247,251,255)',
-					'rgb(222,235,247)',
-					'rgb(198,219,239)',
-					'rgb(158,202,225)',
-					'rgb(107,174,214)',
-					'rgb(66,146,198)',
-					'rgb(33,113,181)',
-					'rgb(8,81,156)',
-					'rgb(8,48,107)'];
-
-var quantile = d3.scale.quantile()
-		.range(colorRange);
-
-var path = d3.geo.path();
-
-var svg = d3.select("#map")
-		//.attr("width", width)
-		//.attr("height", height)
-	.append('svg:g')
-    	.call(d3.behavior.zoom().on("zoom", redraw))
-  	.append('svg:g');
-
-svg.attr("transform", "scale( " + .9 + ")");
-
-function redraw() {
-  // console.log("here", d3.event.translate, d3.event.scale);
-  svg.attr("transform",
-      "translate(" + d3.event.translate + ")"
-      + " scale(" + d3.event.scale + ")");
-}
-
-d3.select("#selectQuantile")
-		.on("change", function(){menuChange();});
-
-d3.select("#selectDate")
-		.on("change", function(){menuChange();});
-
-var tooltip = d3.select(".tooltip")
-	  .style("opacity", 1e-6)
-  	  .style("background", "rgba(250,250,250,.7)");
-
-tooltip.append("span").attr("id", "countyName")
-
-function upload_button(callback) {
-  var uploader = document.getElementById("uploader");
-  var reader = new FileReader();
-
-  reader.onload = function(e) {
-    var contents = d3.csv.parse(e.target.result);
-    callback(null, contents);
-  };
-
-  uploader.addEventListener("change", handleFiles, false);
-
-  function handleFiles() {
-    //d3.select("#table").text("loading...");
-    var file = this.files[0];
-    reader.readAsText(file);
-  };
-};
-
-queue()
-	.defer(d3.json, "us.json")
-	//.defer(d3.csv, "covid.csv")
-	.defer(upload_button)
-	.defer(d3.json, "countyPop.json")
-	.defer(d3.json, "county_names.json")
-	.await(ready);
-
-const q_strings = ["10", "20", "30", "40", "50", "60", "70", "80", "90"];
-var errorArray = [];
-var counties;
-var countyPop;
-function ready(error, us, countiesJSON, countyPopJSON, countyNamesJSON) {
-	counties = countiesJSON;
-	countyPop = countyPopJSON;
-	counties.forEach(function(d){
-		try{
-			d.date = d.id.replace(/-[^-]+$/, "")
-			d.id = d.id.replace(/.*-/,"")
-			d["str_rep"] = countyNamesJSON[d.id.padStart(5, '0')]
-			d.pop = +countyPop[d.id.padStart(5, '0')]
-
-			for (i = 0; i < q_strings.length; ++i){
-				d[q_strings[i]+"pct"] = + (d[q_strings[i]]/d.pop * 100)
-			}
-
-			d.none = '-';
-			statById.set(d.date+d.id, d);
-		}
-		catch(e){
-			//remove double lines of csv
-			throw e;
-		}
-	});
-
-	quantile.domain(counties.map(function(d){return d["90"];}));
-
-	countyShapes = svg.append("g")
-			.attr("class", "counties")
-		.selectAll("path")
-			.data(topojson.feature(us, us.objects.counties).features)
-		.enter().append("path")
-
-		countyShapes
-			.attr("fill", "rgb(200,200,200)")
-			.attr("d", path)
-					.on("mouseover", function(d){
-						d3.select(this)
-							.attr("stroke", "red")
-							.attr("stroke-width", 1)
-
-						tooltip
-						    .style("left", (d3.event.pageX + 5) + "px")
-						    .style("top", (d3.event.pageY - 5) + "px")
-						    .transition().duration(300)
-						    .style("opacity", 1)
-						    .style("display", "block")
-						updateDetails(statById.get(plot_date + d.id));
-				})
-					.on("mouseout", function(d){
-						d3.select(this)
-							.attr("stroke", "")
-							.attr("stroke-width", .2)
-
-						tooltip.transition().duration(700).style("opacity", 0);
-			});
-
-
-	svg.append("path")
-			.datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-			.attr("class", "states")
-			.attr("d", path);
-	dataReady = true
-	d3.select("#waitingText").remove();
-	menuChange();
-}
-
-var printDetails = [
-					//{'var': 'date', 'print': 'Date'},
-					{'var': 'str_rep', 'print': 'County Name'},
-					{'var': 'id', 'print': 'FIPS Code'},
-					{'var': 'pop', 'print': 'Population'},
-					//{'var': 'none', 'print': ''},
-					{'var': quant, 'print': 'Deaths'}];
-
-
-function updateDetails(county){
-	//console.log(county)
-	tooltip.selectAll("div").remove();
-	tooltip.selectAll("div").data(printDetails).enter()
-		.append("div")
-			.append('span')
-				.text(function(d){return (d.print.length > 0) ? d.print + ": " : " - ";})
-				.attr("class", "boldDetail")
-			.insert('span')
-				.text(function(d){
-					if (d.var != 'none'){
-						if (d.var == 'str_rep'){ return county[d.var];}
-						return d.var != 'id' ? totalFormat(county[d.var]) : county[d.var].padStart(5, '0');
-					}})
-				.attr("class", "normalDetail");
-
-	d3.select("#countyName").text(county.County);
-}
-
-var totalFormat = d3.format(",");
-function menuChange(){
-	var selectQuantile = document.getElementById('selectQuantile');
-	selectQuantileValue = selectQuantile.options[selectQuantile.selectedIndex].value;
-	printDetails[3].var=selectQuantileValue
-
-	var selectDate = document.getElementById('selectDate');
-	selectDateValue = selectDate.value;
-	plot_date = selectDateValue
-
-	if (! dataReady){
-		return;
-	}
-
-	var keyName = selectQuantileValue;
-	updateMap(keyName);
-
-	//console.log(d3.sum(counties, function(d){return d[selectDateValue];}));
-	var num = d3.sum(counties, function(d){return d[selectDateValue];});
-	d3.select("#magicNum")
-		.text(selectQuantileValue == 'PerCap' ? d3.round(num*10000/313000000, 3) + " per 100,000" : totalFormat(num));
-}
-
-
-function updateMap(key){
-	quantile.domain(counties.map(function(d){return d[key];}));
-	countyShapes
-		.transition().duration(1000).ease(d3.ease('linear'))
-		.attr("fill", function(d) {
-			if (statById.get(plot_date + d.id)){
-				if(statById.get(plot_date + d.id)[key] == 0){
-					return '#CFD8DC';
-				}
-				else{
-					return quantile(statById.get(plot_date + d.id)[key]);
-				}
-			}
-			else{
-				errorArray.push(d.id);
-				return "#CFD8DC";
-		}});
-}
-
-</script>
+<script src="https://d3js.org/d3.v3.min.js" defer></script>
+<script src="https://d3js.org/queue.v1.min.js" defer></script>
+<script src="https://d3js.org/topojson.v1.min.js" defer></script>
+<script src="https://d3js.org/d3-time.v1.min.js" defer></script>
+<script src="https://d3js.org/d3-time-format.v2.min.js" defer></script>
+<script src="https://d3js.org/d3-scale.v3.min.js" defer></script>
+<script src="saveSvgAsPng.js" defer></script>
+<script src="FileSaver.js" defer></script>
+<script src="main.js" defer></script>
