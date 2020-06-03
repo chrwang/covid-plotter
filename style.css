@@ -6,8 +6,11 @@ body{
 	margin: auto;
 	margin-top: 10px;
 	font-family: 'Source Sans Pro', sans-serif;
+	/*
 	background: #313947;
 	color: #BDBDBD;
+	*/
+	color: #212121;
 }
 
 html {
@@ -36,7 +39,10 @@ html {
 }
 
 #uploader{
+	/*
 	color: #BDBDBD;
+	*/
+	color: #212121;
 }
 
 [type="date"] {
@@ -49,13 +55,6 @@ html {
   opacity: 0;
 }
 
-#selectDate {
-	border: 1px solid #c4c4c4;
-	border-radius: 5px;
-	background-color: #f1f1f1;
-	padding: 3px 5px;
-	box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
-}
 
 #selectQuantile {
 	border: none;
@@ -93,10 +92,13 @@ html {
 }
 
 #downloadBtn{
-	border: none;
+	/*
 	background-color: #313947;
 	color: #BDBDBD;
 	border: 2px solid #BDBDBD;
+	*/
+	color: #212121;
+	border: 2px solid #212121;
 	text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -107,8 +109,12 @@ html {
 }
 
 #downloadBtn:hover{
+	/*
 	background-color:  #BDBDBD;
 	color: black;
+	*/
+	background-color:  #212121;
+	color: #FFF;
 }
 
 
@@ -116,7 +122,10 @@ html {
 	display:block;
 	width:80%;
 	height:97%;
+	/*
 	background:#313947;
+	*/
+	background: #FFF;
 	margin:auto;
 	margin-top:20px;
 	border: 2px solid #000;
@@ -141,13 +150,19 @@ html {
 
 .counties {
 	fill: none;
+	/*
 	stroke: #00BCD4;
+	*/
+	stroke:#FFF;
 	stroke-width:.2;
 }
 
 .states {
 	fill: none;
+	/*
 	stroke: #00BCD4;
+	*/
+	stroke:#FFF;
 	stroke-linejoin: round;
 	stroke-width:1;
 }
@@ -192,7 +207,10 @@ a {
 
 .ticks {
 	font-size: 14px;
+	/*
 	fill: #bdbdbd;
+	*/
+	fill:  #212121;
 }
 
 .track,
@@ -228,6 +246,9 @@ a {
 
 text.label{
 	font-size: 14px;
+	/*
 	fill: #bdbdbd;
+	*/
+	fill:  #212121;
 }
 </style>

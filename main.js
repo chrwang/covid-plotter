@@ -28,7 +28,8 @@ var colorRange = [	'rgb(255, 252, 222)',
 
 
 var quantile = d3.scale.quantile()
-		.range(colorRangeDark);
+		.range(colorRange);
+		//.range(colorRangeDark);
 
 var path = d3.geo.path();
 
